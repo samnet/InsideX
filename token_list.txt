@@ -1,0 +1,9 @@
+eth, Ethereum
+vet, VeChain
+zrx, 0x
+ae, aeternity
+icx, icon
+mkr, maker
+rep, augur
+btm, bytom
+moac, moac
