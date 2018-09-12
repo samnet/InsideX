@@ -1,5 +1,5 @@
 
-### Welcome to the InsideX project
+## Welcome to the InsideX project
 InsideX enables you to monitor transactions by top holders (so called *insiders*) of your favorite token(s).
 
 ### See what it looks like: install the extension on your local machine
@@ -13,3 +13,5 @@ Congratulations! You can now use your popup-based extension by clicking the Insi
 ### Contribute
 
 There are many things to fix before InsideX is production ready. Check the issues section of this repo!
+
+### Contact

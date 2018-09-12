@@ -3,7 +3,7 @@ chrome.runtime.onInstalled.addListener(function() {
   chrome.storage.sync.set({color: '#3aa757'}, function() {
     console.log("The color is green.");
   });
-  chrome.storage.sync.set({tickers: ["eth", "vet", "zrx"]}, function() {
+  chrome.storage.sync.set({tickers: ["mkr", "zrx"]}, function() {
     console.log("The three initial tickers were saved.");
   });
 

@@ -22,7 +22,7 @@ var options = {
 };
 $("#addedTicker").easyAutocomplete(options);
 
-// Tooltip
+// Tooltip visual
 $(function () {
   window.setTimeout(function(){
     $('[data-toggle="tooltip"]').tooltip({
@@ -32,11 +32,13 @@ $(function () {
 })
 
 
-// Function definitions
+// Tooltip logic [ TO DO: need to be able to remove row. Should be simple, seems impossible.]
 function m(anId){
   var row = document.getElementById(anId);
   console.log(row)
 }
+
+// Row creation
 function appendRow(tableBodyId, newrow) {
     var table = document.getElementById(tableBodyId);
     var row = table.insertRow(0);
@@ -54,9 +56,6 @@ function appendRow(tableBodyId, newrow) {
     row.setAttribute("title", tooltipcontent)
 }
 
-
-
-
 // Construct table
 chrome.storage.sync.get("tickers", function(data) {
   console.log("The saved tickers:" + data.tickers)
@@ -73,9 +72,11 @@ chrome.storage.sync.get("tickers", function(data) {
 // Append to table if user inputs new tickers
 let saveit = document.getElementById("saveit");
 saveit.onclick = function(element) {
-  // Append newly selected ticker to saved array
+  // get user text input
   let addedTicker = document.getElementById("addedTicker");
   let newticker = addedTicker.value;
+  // [TO DO] check on validity of this input. If not in token_list.txt, then do nothing.
+  // Append newly selected ticker to saved array of selected tickers
   chrome.storage.sync.get("tickers", function(data) {
     let oldarray = data.tickers
     oldarray.push(newticker) // append is here
@@ -83,6 +84,10 @@ saveit.onclick = function(element) {
       console.log("The new array was saved:" + oldarray);
     });
   });
-  let newrow = [newticker, 1,2,3]
+  let newrow = [newticker, 1,2,3] // Here, replace second entry by Top holder address
+  // 1. find address contract (C) corresponding to newticker. It is actually in token_list.txt (last column).
+  // 2. call script.js C and retrieve top holder's address (H)
+  // 3. display (H) as follows : newrow = [newticker, H, 2, 3]
+
   appendRow("mainTableBody", newrow)
 };
