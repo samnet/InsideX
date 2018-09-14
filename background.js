@@ -7,14 +7,25 @@ chrome.runtime.onInstalled.addListener(function() {
     console.log("The three initial tickers were saved.");
   });
 
-  chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
+  chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {
+
     chrome.declarativeContent.onPageChanged.addRules([{
       conditions: [
         new chrome.declarativeContent.PageStateMatcher({
-          pageUrl: { urlContains: 'com' }
+          pageUrl: { urlContains: 'http' }
         }),
       ],
       actions: [new chrome.declarativeContent.ShowPageAction()]
     }]);
   });
+});
+
+var bkg = chrome.extension.getBackgroundPage();
+
+chrome.runtime.onInstalled.addListener(function (details) {
+  // chrome.alarms.onAlarm.addListener(onAlarm);
+
+  // chrome.alarms.create("extension.alarm1", {periodInMinutes: 1});
+
+  console.log("extension is running");
 });

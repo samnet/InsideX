@@ -87,6 +87,15 @@ saveit.onclick = function(element) {
   let newrow = [newticker, 1,2,3] // Here, replace second entry by Top holder address
   // 1. find address contract (C) corresponding to newticker. It is actually in token_list.txt (last column).
   // 2. call script.js C and retrieve top holder's address (H)
+
+  getList('0x0d88ed6e74bbfd96b831231638b66c05571e824f')
+    .then(res => {
+      console.log(res)
+    })
+    .catch((err) => {
+      console.log("Error: " + err.message);
+    })
+
   // 3. display (H) as follows : newrow = [newticker, H, 2, 3]
 
   appendRow("mainTableBody", newrow)
