@@ -1,6 +1,6 @@
 // The typehead
 var options = {
-  url: "resources/tokens.json",
+  url: "data/tokens.json",
   getValue: "ticker",
   list: {
     match: {
@@ -13,7 +13,7 @@ var options = {
     type: "custom",
     method: function(value, item) {
       // return "<span class='flag flag-" + (item.code).toLowerCase() + "' ></span>" + value;
-      let imgpath = "resources/icons/" + (item.name).toLowerCase() + ".png"
+      let imgpath = "vendor/icons/" + (item.name).toLowerCase() + ".png"
       let country = value + " - " + item.name
       return "<img src='" + imgpath + "'>" + country
     }

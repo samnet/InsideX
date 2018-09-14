@@ -1,7 +1,7 @@
 {
   "name": "InsideX Alpha",
   "version": "1.0",
-  "description": "Build an Extension!",
+  "description": "InsideX Extension!",
   "permissions": ["activeTab", "declarativeContent", "storage"],
   "background": {
      "scripts": ["background.js"],
