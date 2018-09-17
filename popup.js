@@ -88,7 +88,7 @@ saveit.onclick = function(element) {
   // 1. find address contract (C) corresponding to newticker. It is actually in token_list.txt (last column).
   // 2. call script.js C and retrieve top holder's address (H)
 
-  getList('0x0d88ed6e74bbfd96b831231638b66c05571e824f')
+  getHolders('0x0d88ed6e74bbfd96b831231638b66c05571e824f')
     .then(res => {
       console.log(res)
     })
