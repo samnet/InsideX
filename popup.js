@@ -23,7 +23,7 @@ function updateRowContent(tableBodyId, rownum) {
 
 // table content update
 function updateTableContent(tableBodyId) {
-  $("#" + tableBodyId).children("tr").each(function() {
+  $(`#${tableBodyId} tr`).each(function() {
     // console.log(row)
     console.log("iterating")
   });
