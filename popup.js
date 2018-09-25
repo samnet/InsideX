@@ -1,16 +1,38 @@
 // row content update
 function updateRowContent(tableBodyId, rownum) {
-  var table = document.getElementById(tableBodyId);
+  // ticker cell
+  var ticker = document.getElementById(tableBodyId).rows[rownum].cells[0].innerHTML;
+  console.log("[updateRowContent]: ", ticker)
   // fetch & format volume change of last 3 hours
-  // Compare with current value. If negative have it in red
-  // otherwise have it in green
+  var volumeDelta3 = 5 // would have an API call here
+  document.getElementById(tableBodyId).rows[rownum].cells[1].innerHTML = volumeDelta3;
   // fetch & format volume change of last 24 hours
+  var volumeDelta24 = 8 // would have an API call here
+  document.getElementById(tableBodyId).rows[rownum].cells[2].innerHTML = volumeDelta24;
   // fetch & format current Price
+  var newPrice = 2 // would have an API call here
+  var oldPrice = document.getElementById(tableBodyId).rows[rownum].cells[3].innerHTML = volumeDelta24;
+  document.getElementById(tableBodyId).rows[rownum].cells[3].innerHTML = newPrice;
+  // Compare with current value. If negative have it in red, else in green.
+  if (newPrice > oldPrice) {
+    document.getElementById(tableBodyId).rows[rownum].cells[3].style.color = "green";
+  } else {
+    document.getElementById(tableBodyId).rows[rownum].cells[3].style.color= "red";
+  }
 }
 
 // table content update
 function updateTableContent(tableBodyId) {
+  $("#" + tableBodyId).children("tr").each(function() {
+    // console.log(row)
+    console.log("iterating")
+  });
   // for each row call updateRowContent
+  console.log("updating that table");
+  var table = document.getElementById(tableBodyId);
+  // console.log(table)
+  var i = 0;
+  console.log("finished updating this table")
 }
 
 
@@ -28,26 +50,28 @@ function appendRow(tableBodyId, newrow) {
     row.setAttribute("data-html", "true")
     let tooltipcontent = "<button onclick='m(" + randomId + ")'> Remove </button>";
     // let tooltipcontent = "<button> Remove </button>";
-    console.log("tooltipcontent: " + tooltipcontent)
+    // console.log("tooltipcontent: " + tooltipcontent)
     row.setAttribute("title", tooltipcontent)
 }
 
 // Tooltip logic [ TO DO: need to be able to remove row. Should be simple, seems impossible.]
 function m(anId){
   var row = document.getElementById(anId);
-  console.log(row)
+  // console.log(row)
 }
 
 // Construct table
 chrome.storage.sync.get("tickers", function(data) {
-  console.log("The saved tickers:" + data.tickers)
-  console.log(data.tickers)
+  // console.log("The saved tickers:" + data.tickers)
+  // console.log(data.tickers)
   array = data.tickers
   array.forEach(function(element){
     // construct row
     let newrow = [element, 1, 2, 3]
     // append row
     appendRow("mainTableBody", newrow)
+    // update this row
+    updateRowContent("mainTableBody",0)
   })
 });
 
@@ -68,7 +92,14 @@ var options = {
       // Append newly selected ticker to saved array of selected tickers
       chrome.storage.sync.get("tickers", function(data) {
         let oldarray = data.tickers
-        oldarray.push(ticker) // append is here
+        // if the ticker is already in the table, do nothing / exit
+        console.log("Includes: ", oldarray.includes(ticker))
+        if (oldarray.includes(ticker)){
+          console.log("already selected")
+          return  // <<< I would like the onChooseEvent to exit here... how to?
+        }
+        // else, append the newly selected ticker to the selection array
+        oldarray.push(ticker)
         chrome.storage.sync.set({tickers: oldarray}, function() {
           console.log("The new array was saved:" + oldarray);
         });
@@ -76,12 +107,9 @@ var options = {
 
       // Add row to table
       let newrow = [ticker, 0,0,0] // Here, replace second entry by Top holder address
-      // 1. find address contract (C) corresponding to newticker. It is actually in token_list.txt (last column).
-      // 2. call script.js C and retrieve top holder's address (H)
-      // 3. display (H) as follows : newrow = [newticker, H, 2, 3]
-      appendRow("mainTableBody", newrow)
-      // updateRowContent("mainTableBody", 1)
-
+       appendRow("mainTableBody", newrow)
+      // update/populate this row
+      updateRowContent("mainTableBody",0)
     }
   }
   , minCharNumber: 2
@@ -105,6 +133,8 @@ $(function () {
     })
   },500);
 })
+
+updateTableContent("mainTableBody")
 
 // Autoupdate
 // every hours call table update
