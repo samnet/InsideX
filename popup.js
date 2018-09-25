@@ -79,7 +79,7 @@ function hasTicker (ticker) {
   return new Promise((resolve, reject) => {
     chrome.storage.sync.get("tickers", (data) => {
       let oldarray = data.tickers
-  
+
       if (oldarray.includes(ticker)) {
         resolve(true)
       } else {
@@ -106,7 +106,6 @@ var options = {
 
       hasTicker(ticker).then(ticketExists => {
         if (ticketExists) {
-          oldarray.push(ticker)
           chrome.storage.sync.set({tickers: oldarray}, function() {
             console.log("The new array was saved:" + oldarray);
           });

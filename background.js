@@ -1,14 +1,14 @@
 
 
 
- 
+
 
 chrome.runtime.onInstalled.addListener(function() {
 
   chrome.storage.sync.set({color: '#3aa757'}, function() {
     console.log("The color is green.");
   });
-  chrome.storage.sync.set({tickers: ["mkr", "zrx"]}, function() {
+  chrome.storage.sync.set({tickers: ["MKR", "ZRX"]}, function() {
     console.log("The by default selection tickers were saved.");
   });
 
