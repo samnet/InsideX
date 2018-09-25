@@ -75,6 +75,21 @@ chrome.storage.sync.get("tickers", function(data) {
   })
 });
 
+function hasTicker (ticker) {
+  return new Promise((resolve, reject) => {
+    chrome.storage.sync.get("tickers", (data) => {
+      let oldarray = data.tickers
+  
+      if (oldarray.includes(ticker)) {
+        resolve(true)
+      } else {
+        resolve(false)
+      }
+    });
+  });
+}
+
+
 // The typeahead
 var options = {
   theme: "plate-dark",
@@ -89,27 +104,20 @@ var options = {
       var ticker = $("#token_name_input").getSelectedItemData().ticker;
       var address = $("#token_name_input").getSelectedItemData().address;
 
-      // Append newly selected ticker to saved array of selected tickers
-      chrome.storage.sync.get("tickers", function(data) {
-        let oldarray = data.tickers
-        // if the ticker is already in the table, do nothing / exit
-        console.log("Includes: ", oldarray.includes(ticker))
-        if (oldarray.includes(ticker)){
-          console.log("already selected")
-          return  // <<< I would like the onChooseEvent to exit here... how to?
+      hasTicker(ticker).then(ticketExists => {
+        if (ticketExists) {
+          oldarray.push(ticker)
+          chrome.storage.sync.set({tickers: oldarray}, function() {
+            console.log("The new array was saved:" + oldarray);
+          });
+        } else {
+          // Add row to table
+          let newrow = [ticker, 0,0,0] // Here, replace second entry by Top holder address
+          appendRow("mainTableBody", newrow)
+          // update/populate this row
+          updateRowContent("mainTableBody",0)
         }
-        // else, append the newly selected ticker to the selection array
-        oldarray.push(ticker)
-        chrome.storage.sync.set({tickers: oldarray}, function() {
-          console.log("The new array was saved:" + oldarray);
-        });
-      });
-
-      // Add row to table
-      let newrow = [ticker, 0,0,0] // Here, replace second entry by Top holder address
-       appendRow("mainTableBody", newrow)
-      // update/populate this row
-      updateRowContent("mainTableBody",0)
+      })
     }
   }
   , minCharNumber: 2
