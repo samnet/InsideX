@@ -5,6 +5,7 @@
 
 chrome.runtime.onInstalled.addListener(function() {
 
+
   // Initial tickers selection
   chrome.storage.sync.set({tickers: ["MKR", "ZRX"]}, function() {
     console.log("The by default selection tickers were saved.");
@@ -47,3 +48,6 @@ chrome.notifications.onButtonClicked.addListener(function() {
     // chrome.alarms.create({delayInMinutes: item.minutes});
   });
 });
+
+// This line does not work
+chrome.browserAction.setBadgeText({text: 'BETA'});

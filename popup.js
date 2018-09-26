@@ -160,5 +160,6 @@ $(function () {
      delay: { "show": 300, "hide": 500 }
     })
     updateTableContent("mainTableBody")
+
   },500);
 })

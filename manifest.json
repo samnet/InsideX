@@ -8,7 +8,7 @@
      "persistent": false
    },
   "page_action": {
-     "default_title": "Drink Water Event",
+     "default_title": "Insider Moves Monitor",
      "default_popup": "popup.html",
      "default_icon": {
         "16": "images/iX16.png",
