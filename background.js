@@ -50,4 +50,4 @@ chrome.notifications.onButtonClicked.addListener(function() {
 });
 
 // This line does not work
-chrome.browserAction.setBadgeText({text: 'BETA'});
+// chrome.browserAction.setBadgeText({text: 'BETA'});

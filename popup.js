@@ -32,7 +32,6 @@ function updateTableContent(tableBodyId) {
   });
 }
 
-
 // Row creation
 function appendRow(tableBodyId, newrow) {
     var table = document.getElementById(tableBodyId);
@@ -57,37 +56,32 @@ function m(anId){
   // console.log(row)
 }
 
-// Construct table
-chrome.storage.sync.get("tickers", function(data) {
-  // console.log("The saved tickers:" + data.tickers)
-  // console.log(data.tickers)
-  array = data.tickers
-  array.forEach(function(element){
-    // construct row
-    let newrow = [element, 1, 2, 3]
-    // append row
-    appendRow("mainTableBody", newrow)
-    // update this row
-    updateRowContent("mainTableBody",0)
-  })
-});
-
-function hasTicker (ticker) {
+function getTickers () {
   return new Promise((resolve, reject) => {
     chrome.storage.sync.get("tickers", (data) => {
-      let oldarray = data.tickers
-
-      if (oldarray.includes(ticker)) {
-        resolve(true)
-      } else {
-        resolve(false)
-      }
+        resolve(data.tickers)
     });
   });
 }
 
+
+function loadTable() {
+  return getTickers()
+    .then((tickers) => {
+      // console.log("The saved tickers:" + tickers)
+      tickers.forEach(function(element){
+        // construct row
+        let newrow = [element, 1, 2, 3]
+        // append row
+        appendRow("mainTableBody", newrow)
+        // update this row
+        updateRowContent("mainTableBody",0)
+      })
+    })
+}
+
 // The typeahead
-var options = {
+$("#token_name_input").easyAutocomplete({
   theme: "plate-dark",
   url: "data/tokens.json",
   getValue: "name",
@@ -97,25 +91,27 @@ var options = {
     },
     maxNumberOfElements: 6,
     onChooseEvent: function() {
-      var ticker = $("#token_name_input").getSelectedItemData().ticker;
+      var newTicker = $("#token_name_input").getSelectedItemData().ticker;
       var address = $("#token_name_input").getSelectedItemData().address;
 
-      hasTicker(ticker).then(ticketExists => {
-        if (ticketExists) {
-          chrome.storage.sync.set({tickers: oldarray}, function() {
-            console.log("The new array was saved:" + oldarray);
-          });
-        } else {
-          // Add row to table
-          let newrow = [ticker, 0,0,0] // Here, replace second entry by Top holder address
-          appendRow("mainTableBody", newrow)
-          // update/populate this row
-          updateRowContent("mainTableBody",0)
-        }
-      })
+      getTickers()
+        .then(tickers => {
+          if (!tickers.includes(newTicker)) {
+            // Add row to table
+            const newrow = [ticker, 0,0,0] // Here, replace second entry by Top holder address
+            tickers.push(newrow)
+            chrome.storage.sync.set({tickers: tickers}, function() {
+              console.log("The new array was saved:" + tickers);
+            });
+
+            appendRow("mainTableBody", newrow)
+            // update/populate this row
+            updateRowContent("mainTableBody",0)
+          }
+        })
     }
   }
-  , minCharNumber: 2
+  , minCharNumber: 1
   , template: {
     type: "custom",
     method: function(value, item) {
@@ -124,12 +120,11 @@ var options = {
       return "<img src='" + item.pic + "'>" + abbrevAndName
     }
   }
-};
-
-$("#token_name_input").easyAutocomplete(options);
+});
 
 // initial updating of table
 $( document ).ready(function() {
+  loadTable()
 });
 
 // Autoupdate
