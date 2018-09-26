@@ -5,16 +5,13 @@
 
 chrome.runtime.onInstalled.addListener(function() {
 
-  chrome.storage.sync.set({color: '#3aa757'}, function() {
-    console.log("The color is green.");
-  });
+  // Initial tickers selection
   chrome.storage.sync.set({tickers: ["MKR", "ZRX"]}, function() {
     console.log("The by default selection tickers were saved.");
   });
 
 
   chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {
-
     chrome.declarativeContent.onPageChanged.addRules([{
       conditions: [
         new chrome.declarativeContent.PageStateMatcher({
@@ -26,12 +23,27 @@ chrome.runtime.onInstalled.addListener(function() {
   });
 });
 
+// Don't know what this line is for.
 var bkg = chrome.extension.getBackgroundPage();
 
-chrome.runtime.onInstalled.addListener(function (details) {
-  // chrome.alarms.onAlarm.addListener(onAlarm);
+// Alarm pop-up
+chrome.alarms.onAlarm.addListener(function() {
+  // chrome.browserAction.setBadgeText({text: ''});
+  chrome.notifications.create({
+      type:     'basic',
+      iconUrl:  './images/iX32.png',
+      title:    'Insider Move Alert',
+      message:  'Holding by top 10 holders of this token changed by X',
+      buttons: [
+        {title: 'Not defined yet.'}
+      ],
+      priority: 0});
+});
 
-  // chrome.alarms.create("extension.alarm1", {periodInMinutes: 1});
-
-  console.log("extension is running");
+// Event listener for clickhin on alarm popup button
+chrome.notifications.onButtonClicked.addListener(function() {
+  chrome.storage.sync.get(['minutes'], function(item) {
+    // chrome.browserAction.setBadgeText({text: 'ON'});
+    // chrome.alarms.create({delayInMinutes: item.minutes});
+  });
 });

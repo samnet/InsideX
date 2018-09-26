@@ -23,16 +23,13 @@ function updateRowContent(tableBodyId, rownum) {
 
 // table content update
 function updateTableContent(tableBodyId) {
-  $(`#${tableBodyId} tr`).each(function() {
-    // console.log(row)
-    console.log("iterating")
-  });
-  // for each row call updateRowContent
-  console.log("updating that table");
-  var table = document.getElementById(tableBodyId);
-  // console.log(table)
   var i = 0;
-  console.log("finished updating this table")
+  $(`#${tableBodyId} tr`).each(function() {
+    // for each row call updateRowContent
+    console.log("Iterating through table")
+    updateRowContent(tableBodyId, i)
+    i += 1
+  });
 }
 
 
@@ -131,24 +128,37 @@ var options = {
 
 $("#token_name_input").easyAutocomplete(options);
 
-// Tooltip visual
-$(function () {
-  window.setTimeout(function(){
-    $('[data-toggle="tooltip"]').tooltip({
-     delay: { "show": 300, "hide": 600 }
-    })
-  },500);
-})
-
-updateTableContent("mainTableBody")
+// initial updating of table
+$( document ).ready(function() {
+});
 
 // Autoupdate
 // every hours call table update
 
-// getHolders('0x0d88ed6e74bbfd96b831231638b66c05571e824f')
-//   .then(res => {
-//     console.log(res)
-//   })
-//   .catch((err) => {
-//     console.log("Error: " + err.message);
-//   })
+// Alarm (for now a place holder. Alarm triggered every 6 seconds)
+function setAlarm() {
+  let minutes = 0.1
+  // chrome.browserAction.setBadgeText({text: 'ON'});
+  chrome.alarms.create({delayInMinutes: minutes});
+  chrome.storage.sync.set({minutes: minutes});
+  window.close();
+}
+
+function clearAlarm() {
+  // chrome.browserAction.setBadgeText({text: ''});
+  chrome.alarms.clearAll();
+  window.close();
+}
+document.getElementById('alarmToggle').addEventListener('click', function(){
+  setAlarm()
+});
+
+// Tooltip visual
+$(function () {
+  window.setTimeout(function(){
+    $('[data-toggle="tooltip"]').tooltip({
+     delay: { "show": 300, "hide": 500 }
+    })
+    updateTableContent("mainTableBody")
+  },500);
+})

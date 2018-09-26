@@ -2,12 +2,13 @@
   "name": "InsideX Alpha",
   "version": "1.0",
   "description": "InsideX Extension!",
-  "permissions": ["activeTab", "declarativeContent", "storage"],
+  "permissions": ["alarms", "notifications", "activeTab", "declarativeContent", "storage"],
   "background": {
      "scripts": ["background.js"],
      "persistent": false
    },
   "page_action": {
+     "default_title": "Drink Water Event",
      "default_popup": "popup.html",
      "default_icon": {
         "16": "images/iX16.png",
