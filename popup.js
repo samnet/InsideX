@@ -1,3 +1,8 @@
+// 2. The calls I would liek to be able to make are:
+// change in the aggregate volume of top 10 addresses over last 3 hours = call1(contract adress)
+// change in the aggregate volume of top 10 addresses over last 36 hours = call2(contract adress)
+// current token price = call3(contract adress)
+
 // row content update
 function updateRowContent(tableBodyId, rownum) {
   // ticker cell
@@ -56,17 +61,9 @@ function m(anId){
   // console.log(row)
 }
 
-function getTickers () {
-  return new Promise((resolve, reject) => {
-    chrome.storage.sync.get("tickers", (data) => {
-        resolve(data.tickers)
-    });
-  });
-}
-
 
 function loadTable() {
-  return getTickers()
+  return getStore('tickers')
     .then((tickers) => {
       // console.log("The saved tickers:" + tickers)
       tickers.forEach(function(element){
@@ -94,19 +91,19 @@ $("#token_name_input").easyAutocomplete({
       var newTicker = $("#token_name_input").getSelectedItemData().ticker;
       var address = $("#token_name_input").getSelectedItemData().address;
 
-      getTickers()
+      getStore('tickers')
         .then(tickers => {
           if (!tickers.includes(newTicker)) {
             // Add row to table
-            const newrow = [ticker, 0,0,0] // Here, replace second entry by Top holder address
+            const newrow = [newTicker, 0,0,0] // Here, replace second entry by Top holder address
             tickers.push(newrow)
-            chrome.storage.sync.set({tickers: tickers}, function() {
-              console.log("The new array was saved:" + tickers);
-            });
-
-            appendRow("mainTableBody", newrow)
-            // update/populate this row
-            updateRowContent("mainTableBody",0)
+            setStore('tickers', tickers)
+              .then((data) => {
+                console.log("The new array was saved:" + data);
+                appendRow("mainTableBody", newrow)
+                // update/populate this row
+                updateRowContent("mainTableBody", 0)
+              });
           }
         })
     }

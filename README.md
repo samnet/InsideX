@@ -15,3 +15,10 @@ Congratulations! You can now use your popup-based extension by clicking the Insi
 There are many things to fix before InsideX is production ready. Check the issues section of this repo!
 
 ### Contact
+
+
+
+
+### Push notification service
+
+Ideally migrate to use https://developer.chrome.com/apps/gcm in near time. Contributions welcome.
