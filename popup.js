@@ -1,6 +1,11 @@
 // 2. The calls I would liek to be able to make are:
 // change in the aggregate volume of top 10 addresses over last 3 hours = call1(contract adress)
+getDiffInHoldings(3, ['test', 'test2'])
 // change in the aggregate volume of top 10 addresses over last 36 hours = call2(contract adress)
+setTimeout(function () {
+  getDiffInHoldings(36, ['test', 'test2'])
+  getHolders('0x0d88ed6e74bbfd96b831231638b66c05571e824f')
+}, 3000)
 // current token price = call3(contract adress)
 
 // row content update

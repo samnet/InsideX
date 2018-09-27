@@ -2,7 +2,10 @@
   "name": "InsideX Alpha",
   "version": "1.0",
   "description": "InsideX Extension!",
-  "permissions": ["alarms", "notifications", "activeTab", "declarativeContent", "storage"],
+  "permissions": [
+    "alarms", "notifications", "activeTab", "declarativeContent", "storage",
+    "https://www.bytes.io/"
+  ],
   "background": {
      "scripts": ["background.js"],
      "persistent": false
