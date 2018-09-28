@@ -1,35 +1,14 @@
-
-
-
-
-
 chrome.runtime.onInstalled.addListener(function() {
-
-
-  // Initial tickers selection
+  // Default tickers selection
   chrome.storage.sync.set({tickers: ["MKR", "ZRX"]}, function() {
     console.log("The by default selection tickers were saved.");
   });
-
-
-  chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {
-    chrome.declarativeContent.onPageChanged.addRules([{
-      conditions: [
-        new chrome.declarativeContent.PageStateMatcher({
-          pageUrl: { urlContains: 'http' }
-        }),
-      ],
-      actions: [new chrome.declarativeContent.ShowPageAction()]
-    }]);
-  });
 });
 
-// Don't know what this line is for.
+// There is no console. Use bkg.console.log()
 var bkg = chrome.extension.getBackgroundPage();
 
-// Alarm pop-up
 chrome.alarms.onAlarm.addListener(function() {
-  // chrome.browserAction.setBadgeText({text: ''});
   chrome.notifications.create({
       type:     'basic',
       iconUrl:  './images/iX32.png',
@@ -43,11 +22,12 @@ chrome.alarms.onAlarm.addListener(function() {
 
 // Event listener for clickhin on alarm popup button
 chrome.notifications.onButtonClicked.addListener(function() {
+  bkg.console.log('Started alarm')
   chrome.storage.sync.get(['minutes'], function(item) {
-    // chrome.browserAction.setBadgeText({text: 'ON'});
+    chrome.browserAction.setBadgeText({text: 'ON'});
     // chrome.alarms.create({delayInMinutes: item.minutes});
   });
 });
 
 // This line does not work
-// chrome.browserAction.setBadgeText({text: 'BETA'});
+chrome.browserAction.setBadgeText({text: 'BETA'});
