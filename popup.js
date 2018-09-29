@@ -36,7 +36,6 @@ function updateRowContent(tableBodyId, rownum) {
 
 }
 
-
 function deleteTicker() {
   const ticker = this.id
   console.log('delete', ticker)
@@ -47,6 +46,7 @@ function deleteTicker() {
         tickers.splice(index, 1);
         setStore('tickers', tickers)
           .then(() => {
+            clearTable()
             loadTable()
           });
       }
@@ -75,6 +75,9 @@ function appendRow(tableBodyId, newrow) {
   })
 }
 
+function clearTable() {
+  $('#mainTableBody').empty();
+}
 
 function loadTable() {
   return getStore('tickers')
@@ -108,13 +111,13 @@ $("#token_name_input").easyAutocomplete({
       getStore('tickers')
         .then(tickers => {
           if (!tickers.includes(newTicker)) {
+
             // Add row to table
-            const newrow = [newTicker, 0,0,0] // Here, replace second entry by Top holder address
-            tickers.push(newrow)
+            tickers.push(newTicker)
             setStore('tickers', tickers)
               .then((data) => {
                 console.log("The new array was saved:" + data);
-                appendRow("mainTableBody", newrow)
+                appendRow("mainTableBody", [newTicker, 1, 2, 3, 4])
                 // update/populate this row
                 updateRowContent("mainTableBody", 0)
               });
