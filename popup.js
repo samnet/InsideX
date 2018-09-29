@@ -23,7 +23,10 @@ function updateRowContent(tableBodyId, rownum) {
   var newPrice = 2 // would have an API call here
   var oldPrice = document.getElementById(tableBodyId).rows[rownum].cells[3].innerHTML = volumeDelta24;
   document.getElementById(tableBodyId).rows[rownum].cells[3].innerHTML = newPrice;
-  // Compare with current value. If negative have it in red, else in green.
+  
+  // var removeBtn = '<a class="delete" title="" data-toggle="tooltip" data-original-title="Delete"><i class="material-icons"></i></a>'
+  // document.getElementById(tableBodyId).rows[rownum].cells[4].innerHTML = removeBtn;
+
   if (newPrice > oldPrice) {
     document.getElementById(tableBodyId).rows[rownum].cells[3].style.color = "green";
   } else {
@@ -44,26 +47,12 @@ function updateTableContent(tableBodyId) {
 
 // Row creation
 function appendRow(tableBodyId, newrow) {
-    var table = document.getElementById(tableBodyId);
-    var row = table.insertRow(0);
-    newrow.forEach(function(element){
-      let newcell = row.insertCell(-1);
-      newcell.innerHTML = element;
-    })
-    let randomId = String(Math.round(Math.random()*100000000));
-    row.setAttribute("id", randomId)
-    row.setAttribute("data-toggle", "tooltip")
-    row.setAttribute("data-html", "true")
-    let tooltipcontent = "<button onclick='m(" + randomId + ")'> Remove </button>";
-    // let tooltipcontent = "<button> Remove </button>";
-    // console.log("tooltipcontent: " + tooltipcontent)
-    row.setAttribute("title", tooltipcontent)
-}
-
-// Tooltip logic [ TO DO: need to be able to remove row. Should be simple, seems impossible.]
-function m(anId){
-  var row = document.getElementById(anId);
-  // console.log(row)
+  var table = document.getElementById(tableBodyId);
+  var row = table.insertRow(0);
+  newrow.forEach(function(element){
+    let newcell = row.insertCell(-1);
+    newcell.innerHTML = element;
+  })
 }
 
 
