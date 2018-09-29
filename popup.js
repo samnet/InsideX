@@ -23,15 +23,35 @@ function updateRowContent(tableBodyId, rownum) {
   var newPrice = 2 // would have an API call here
   var oldPrice = document.getElementById(tableBodyId).rows[rownum].cells[3].innerHTML = volumeDelta24;
   document.getElementById(tableBodyId).rows[rownum].cells[3].innerHTML = newPrice;
-  
-  // var removeBtn = '<a class="delete" title="" data-toggle="tooltip" data-original-title="Delete"><i class="material-icons"></i></a>'
-  // document.getElementById(tableBodyId).rows[rownum].cells[4].innerHTML = removeBtn;
-
   if (newPrice > oldPrice) {
     document.getElementById(tableBodyId).rows[rownum].cells[3].style.color = "green";
   } else {
-    document.getElementById(tableBodyId).rows[rownum].cells[3].style.color= "red";
+    document.getElementById(tableBodyId).rows[rownum].cells[3].style.color = "red";
   }
+
+  var removeBtn = '<a class="delete" title="Delete" data-toggle="tooltip" data-original-title="Delete"><i class="material-icons">delete</i></a>'
+  document.getElementById(tableBodyId).rows[rownum].cells[4].innerHTML = removeBtn;
+  document.getElementById(tableBodyId).rows[rownum].cells[4].id = ticker
+  document.getElementById(tableBodyId).rows[rownum].cells[4].addEventListener("click", deleteTicker);
+
+}
+
+
+function deleteTicker() {
+  const ticker = this.id
+  console.log('delete', ticker)
+  getStore('tickers')
+    .then(tickers => {
+      var index = tickers.indexOf(ticker);
+      if (index > -1) {
+        tickers.splice(index, 1);
+        setStore('tickers', tickers)
+          .then(() => {
+            loadTable()
+          });
+      }
+
+    })
 }
 
 // table content update
@@ -62,7 +82,7 @@ function loadTable() {
       // console.log("The saved tickers:" + tickers)
       tickers.forEach(function(element){
         // construct row
-        let newrow = [element, 1, 2, 3]
+        let newrow = [element, 1, 2, 3, 4]
         // append row
         appendRow("mainTableBody", newrow)
         // update this row
