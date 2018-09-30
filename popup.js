@@ -1,4 +1,5 @@
 function updateTable() {
+  clearTable()
   const table = document.getElementById('mainTableBody')
 
   return Promise.all([
@@ -68,7 +69,6 @@ function deleteTicker() {
         tickers.splice(index, 1);
         setStore('tickers', tickers)
           .then(() => {
-            clearTable()
             updateTable()
           });
       }
@@ -130,16 +130,18 @@ $("#token_name_input").easyAutocomplete({
     maxNumberOfElements: 6,
     onChooseEvent: function() {
       var newTicker = $("#token_name_input").getSelectedItemData().ticker;
-      var contractAddress = $("#token_name_input").getSelectedItemData().contractAddress;
 
       getStore('tickers')
         .then(tickers => {
           if (!tickers.includes(newTicker)) {
 
-            // Add row to table
+            // Add new ticker
             tickers.push(newTicker)
             return setStore('tickers', tickers)
-              .then((data) => {
+              .then(() => {
+                return loadHoldingsData()
+              })
+              .then(() => {
                 return updateTable()
               });
           }
