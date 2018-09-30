@@ -99,6 +99,14 @@ $("#token_name_input").easyAutocomplete({
   theme: "plate-dark",
   url: "data/tokens.json",
   getValue: "name",
+  minCharNumber: 1,
+  template: {
+    type: "custom",
+    method: function (value, item) {
+      const abbrevAndName = `${item.name} | ${item.ticker.toUpperCase()}`
+      return `<img src="vendor/icons/${item.name}.png">   ${abbrevAndName}`
+    }
+  },
   list: {
     match: {
       enabled: true
@@ -128,20 +136,6 @@ $("#token_name_input").easyAutocomplete({
         })
     }
   }
-  , minCharNumber: 1
-  , template: {
-    type: "custom",
-    method: function(value, item) {
-      // value corresponds to the "getValue" key, above.
-      let abbrevAndName = item.name + " | " + item.ticker
-      return "<img src='" + item.pic + "'>" + abbrevAndName
-    }
-  }
-});
-
-// initial updating of table
-$( document ).ready(function() {
-  loadTable()
 });
 
 // Autoupdate
@@ -150,27 +144,18 @@ $( document ).ready(function() {
 // Alarm (for now a place holder. Alarm triggered every 6 seconds)
 function setAlarm() {
   let minutes = 0.1
-  // chrome.browserAction.setBadgeText({text: 'ON'});
   chrome.alarms.create({delayInMinutes: minutes});
-  chrome.storage.sync.set({minutes: minutes});
-  window.close();
+  setStore('minutes', minutes)
 }
 
 function clearAlarm() {
   chrome.alarms.clearAll();
-  window.close();
 }
 // document.getElementById('alarmToggle').addEventListener('click', function(){
 //   setAlarm()
 // });
 
-// Tooltip visual
-$(function () {
-  window.setTimeout(function(){
-    $('[data-toggle="tooltip"]').tooltip({
-     delay: { "show": 300, "hide": 500 }
-    })
-    updateTableContent("mainTableBody")
-
-  },500);
-})
+$(document).ready(function () {
+  loadTable()
+  updateTableContent("mainTableBody")
+});
