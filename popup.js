@@ -108,7 +108,6 @@ function loadHoldingsData() {
         setStore('holdings-last-load', Date.now())
       ])
     })
-
 }
 
 // The typeahead
@@ -154,23 +153,6 @@ $("#token_name_input").easyAutocomplete({
   }
 });
 
-// Autoupdate
-// every hours call table update
-
-// Alarm (for now a place holder. Alarm triggered every 6 seconds)
-function setAlarm() {
-  let minutes = 0.1
-  chrome.alarms.create({delayInMinutes: minutes});
-  setStore('minutes', minutes)
-}
-
-function clearAlarm() {
-  chrome.alarms.clearAll();
-}
-// document.getElementById('alarmToggle').addEventListener('click', function(){
-//   setAlarm()
-// });
-
 
 $(document).ready(function () {
   loadTokensJson()
@@ -199,3 +181,64 @@ $(document).ready(function () {
 // holdings-24 : 24 hour holdings for the tickers
 // holdings-120 : 120 hour holdings for the tickers
 // table-data : display table info
+
+
+
+///// polling
+var pollInterval = 20 * 60000;
+var timerId;
+
+function startPoller() {
+  console.log('poller started')
+  loadHoldingsData()
+    .then(() => {
+      return Promise.all([
+        getStore('tickers'),
+        getStore('tokens'),
+        getStore('holdings-24'),
+        getStore('holdings-120')
+      ])
+    })
+    .then((res) => {
+      const tickers = res[0]
+      const tokens = res[1]
+      const holdings24 = res[2]
+      const holdings120 = res[3]
+
+      tickers.forEach((ticker) => {
+        const contractAddress = tokens
+          .find(t => t.ticker.toLowerCase() === ticker.toLowerCase())
+          .contractAddress
+
+        var volumeChange120 = getHoldingChange(holdings120[contractAddress])
+        var volumeChange24 = getHoldingChange(holdings24[contractAddress])
+        if (volumeChange120 < -5 || volumeChange24 < -5) {
+          // set the alarm
+          console.log("set alarm", ticker, volumeChange120, volumeChange24)
+          setAlarm()
+        }
+      })
+    })
+    .catch(err => {
+      console.log('Polling err', err);
+    })
+
+  timerId = window.setTimeout(startPoller, pollInterval);
+}
+
+window.addEventListener('DOMContentLoaded', function () {
+  console.log('window.addEventListener');
+  startPoller();
+});
+
+
+// Alarm (for now a place holder. Alarm triggered every 6 seconds)
+function setAlarm() {
+  let minutes = 0.1
+  chrome.alarms.create({ delayInMinutes: minutes });
+  setStore('minutes', minutes)
+}
+
+function clearAlarm() {
+  chrome.alarms.clearAll();
+}
