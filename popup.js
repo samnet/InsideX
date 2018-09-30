@@ -114,7 +114,7 @@ $("#token_name_input").easyAutocomplete({
 
             // Add row to table
             tickers.push(newTicker)
-            setStore('tickers', tickers)
+            return setStore('tickers', tickers)
               .then((data) => {
                 console.log("The new array was saved:" + data);
                 appendRow("mainTableBody", [newTicker, 1, 2, 3, 4])
@@ -122,6 +122,9 @@ $("#token_name_input").easyAutocomplete({
                 updateRowContent("mainTableBody", 0)
               });
           }
+        })
+        .then(() => {
+          $("#token_name_input").val("")
         })
     }
   }
@@ -154,13 +157,12 @@ function setAlarm() {
 }
 
 function clearAlarm() {
-  // chrome.browserAction.setBadgeText({text: ''});
   chrome.alarms.clearAll();
   window.close();
 }
-document.getElementById('alarmToggle').addEventListener('click', function(){
-  setAlarm()
-});
+// document.getElementById('alarmToggle').addEventListener('click', function(){
+//   setAlarm()
+// });
 
 // Tooltip visual
 $(function () {
