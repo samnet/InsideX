@@ -104,7 +104,8 @@ function loadHoldingsData() {
       console.log(res)
       return Promise.all([
         setStore('holdings-24', res[0]),
-        setStore('holdings-120', res[1])
+        setStore('holdings-120', res[1]),
+        setStore('holdings-last-load', Date.now())
       ])
     })
 
@@ -173,7 +174,20 @@ function clearAlarm() {
 
 $(document).ready(function () {
   loadTokensJson()
-  loadHoldingsData()
+  getStore('holdings-last-load')
+    .then((lastLoaded) => {
+      console.log({lastLoaded})
+      if (!lastLoaded) {
+        return loadHoldingsData()
+      }
+
+      lastLoaded = new Date(lastLoaded)
+      lastLoaded.setHours(lastLoaded.getHours() + 1)
+      if (Date.now() > lastLoaded) {
+        return loadHoldingsData()
+      }
+    })
+
   updateTable()
 });
 
