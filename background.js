@@ -10,14 +10,15 @@ var bkg = chrome.extension.getBackgroundPage();
 
 chrome.alarms.onAlarm.addListener(function() {
   chrome.notifications.create({
-      type:     'basic',
-      iconUrl:  './images/iX32.png',
-      title:    'Insider Move Alert',
-      message:  'Holding by top 10 holders of this token changed by X',
-      buttons: [
-        {title: 'Not defined yet.'}
-      ],
-      priority: 0});
+    type:     'basic',
+    iconUrl:  './images/iX32.png',
+    title:    'Insider Move Alert',
+    message:  'Holding by top 10 holders of this token changed by X',
+    buttons: [
+      {title: 'Not defined yet.'}
+    ],
+    priority: 0
+  });
 });
 
 // Event listener for clickhin on alarm popup button
@@ -29,5 +30,4 @@ chrome.notifications.onButtonClicked.addListener(function() {
   });
 });
 
-// This line does not work
 chrome.browserAction.setBadgeText({text: 'BETA'});

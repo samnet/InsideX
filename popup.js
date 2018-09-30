@@ -1,16 +1,20 @@
-// 2. The calls I would liek to be able to make are:
-// change in the aggregate volume of top 10 addresses over last 3 hours = call1(contract adress)
-// getDiffInHoldings(3, ['test', 'test2'])
-// change in the aggregate volume of top 10 addresses over last 36 hours = call2(contract adress)
-setTimeout(function () {
-  getDiffInHoldings(36, ['0x0d88ed6e74bbfd96b831231638b66c05571e824f'])
-  getHolders('0x0d88ed6e74bbfd96b831231638b66c05571e824f')
-}, 3000)
-// current token price = call3(contract adress)
-
 // row content update
-function updateRowContent(tableBodyId, rownum) {
-  const table = document.getElementById(tableBodyId)
+function updateRowContent(rownum) {
+  // return Promise.all([
+  //   getStore('tickers'),
+  //   getStore('tokens')
+  // ])
+  // .then((res) => {
+  //   const tickers = res[0]
+  //   const tokens = res[1]
+  //   const contractAddresses = tickers.map(ticker => {
+  //     return tokens
+  //       .find(t => t.ticker.toLowerCase() === ticker.toLowerCase())
+  //       .contractAddress
+  //   })
+  // })
+
+  const table = document.getElementById('mainTableBody')
 
   var ticker = table.rows[rownum].cells[0].innerHTML;
   console.log("[updateRowContent]: ", ticker)
@@ -22,7 +26,7 @@ function updateRowContent(tableBodyId, rownum) {
   table.rows[rownum].cells[2].innerHTML = volumeDelta24;
 
   var newPrice = 2
-  var oldPrice = document.getElementById(tableBodyId).rows[rownum].cells[3].innerHTML = volumeDelta24;
+  var oldPrice = table.rows[rownum].cells[3].innerHTML = volumeDelta24;
   table.rows[rownum].cells[3].innerHTML = newPrice;
   if (newPrice > oldPrice) {
     table.rows[rownum].cells[3].style.color = "green";
@@ -60,14 +64,14 @@ function updateTableContent(tableBodyId) {
   $(`#${tableBodyId} tr`).each(function() {
     // for each row call updateRowContent
     console.log("Iterating through table")
-    updateRowContent(tableBodyId, i)
+    updateRowContent(i)
     i += 1
   });
 }
 
 // Row creation
-function appendRow(tableBodyId, newrow) {
-  var table = document.getElementById(tableBodyId);
+function appendRow(newrow) {
+  var table = document.getElementById('mainTableBody');
   var row = table.insertRow(0);
   newrow.forEach(function(element){
     let newcell = row.insertCell(-1);
@@ -83,15 +87,50 @@ function loadTable() {
   return getStore('tickers')
     .then((tickers) => {
       // console.log("The saved tickers:" + tickers)
-      tickers.forEach(function(element){
+      tickers.forEach(function(ticker){
         // construct row
-        let newrow = [element, 1, 2, 3, 4]
+        const newrow = [ticker.toUpperCase(), 1, 2, 3, 4]
         // append row
-        appendRow("mainTableBody", newrow)
+        appendRow(newrow)
         // update this row
-        updateRowContent("mainTableBody",0)
+        updateRowContent(0)
       })
     })
+}
+
+function loadTokensJson() {
+  return axios.get('data/tokens.json')
+    .then(resp => {
+      return setStore('tokens', resp.data);
+    })
+}
+
+function loadHoldingsData() {
+  return Promise.all([
+      getStore('tickers'),
+      getStore('tokens')
+    ])
+    .then((res) => {
+      const tickers = res[0]
+      const tokens = res[1]
+      const contractAddresses = tickers.map(ticker => {
+        return tokens
+          .find(t => t.ticker.toLowerCase() === ticker.toLowerCase())
+          .contractAddress
+      })
+      return Promise.all([
+        getDiffInHoldings(24, contractAddresses),
+        getDiffInHoldings(120, contractAddresses)
+      ])
+    })
+    .then((res) => {
+      console.log(res)
+      return Promise.all([
+        setStore('holdings-24', res[0]),
+        setStore('holdings-120', res[1])
+      ])
+    })
+
 }
 
 // The typeahead
@@ -125,9 +164,9 @@ $("#token_name_input").easyAutocomplete({
             return setStore('tickers', tickers)
               .then((data) => {
                 console.log("The new array was saved:" + data);
-                appendRow("mainTableBody", [newTicker, 1, 2, 3, 4])
+                appendRow([newTicker, 1, 2, 3, 4])
                 // update/populate this row
-                updateRowContent("mainTableBody", 0)
+                updateRowContent(0)
               });
           }
         })
@@ -155,7 +194,18 @@ function clearAlarm() {
 //   setAlarm()
 // });
 
+
 $(document).ready(function () {
+  loadTokensJson()
+  loadHoldingsData()
   loadTable()
   updateTableContent("mainTableBody")
 });
+
+
+
+// store info
+// tickers : watching tokens
+// tokens : total tokens available
+// holdings-24 : 24 hour holdings for the tickers
+// holdings-120 : 120 hour holdings for the tickers
