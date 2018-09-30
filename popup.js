@@ -10,29 +10,30 @@ setTimeout(function () {
 
 // row content update
 function updateRowContent(tableBodyId, rownum) {
-  // ticker cell
-  var ticker = document.getElementById(tableBodyId).rows[rownum].cells[0].innerHTML;
+  const table = document.getElementById(tableBodyId)
+
+  var ticker = table.rows[rownum].cells[0].innerHTML;
   console.log("[updateRowContent]: ", ticker)
-  // fetch & format volume change of last 3 hours
-  var volumeDelta3 = 5 // would have an API call here
-  document.getElementById(tableBodyId).rows[rownum].cells[1].innerHTML = volumeDelta3;
-  // fetch & format volume change of last 24 hours
-  var volumeDelta24 = 8 // would have an API call here
-  document.getElementById(tableBodyId).rows[rownum].cells[2].innerHTML = volumeDelta24;
-  // fetch & format current Price
-  var newPrice = 2 // would have an API call here
+
+  var volumeDelta3 = 5
+  table.rows[rownum].cells[1].innerHTML = volumeDelta3;
+
+  var volumeDelta24 = 8
+  table.rows[rownum].cells[2].innerHTML = volumeDelta24;
+
+  var newPrice = 2
   var oldPrice = document.getElementById(tableBodyId).rows[rownum].cells[3].innerHTML = volumeDelta24;
-  document.getElementById(tableBodyId).rows[rownum].cells[3].innerHTML = newPrice;
+  table.rows[rownum].cells[3].innerHTML = newPrice;
   if (newPrice > oldPrice) {
-    document.getElementById(tableBodyId).rows[rownum].cells[3].style.color = "green";
+    table.rows[rownum].cells[3].style.color = "green";
   } else {
-    document.getElementById(tableBodyId).rows[rownum].cells[3].style.color = "red";
+    table.rows[rownum].cells[3].style.color = "red";
   }
 
   var removeBtn = '<a class="delete" title="Delete" data-toggle="tooltip" data-original-title="Delete"><i class="material-icons">delete</i></a>'
-  document.getElementById(tableBodyId).rows[rownum].cells[4].innerHTML = removeBtn;
-  document.getElementById(tableBodyId).rows[rownum].cells[4].id = ticker
-  document.getElementById(tableBodyId).rows[rownum].cells[4].addEventListener("click", deleteTicker);
+  table.rows[rownum].cells[4].innerHTML = removeBtn;
+  table.rows[rownum].cells[4].id = ticker
+  table.rows[rownum].cells[4].addEventListener("click", deleteTicker);
 
 }
 
@@ -50,7 +51,6 @@ function deleteTicker() {
             loadTable()
           });
       }
-
     })
 }
 
@@ -114,7 +114,7 @@ $("#token_name_input").easyAutocomplete({
     maxNumberOfElements: 6,
     onChooseEvent: function() {
       var newTicker = $("#token_name_input").getSelectedItemData().ticker;
-      var address = $("#token_name_input").getSelectedItemData().address;
+      var contractAddress = $("#token_name_input").getSelectedItemData().contractAddress;
 
       getStore('tickers')
         .then(tickers => {
