@@ -6,13 +6,15 @@ function updateTable() {
     getStore('tickers'),
     getStore('tokens'),
     getStore('holdings-24'),
-    getStore('holdings-120')
+    getStore('holdings-120'),
+    getStore('prices')
   ])
   .then((res) => {
     const tickers = res[0]
     const tokens = res[1]
     const holdings24 = res[2]
     const holdings120 = res[3]
+    const prices = res[4]
 
     tickers.forEach((ticker, rownum) => {
       console.log("[updateTable]: ", ticker)
@@ -32,20 +34,22 @@ function updateTable() {
       var volumeDelta24 = getHoldingChange(holdings24[contractAddress])
       table.rows[rownum].cells[2].innerHTML = volumeDelta24;
 
-      var newPrice = 2
-      var oldPrice = table.rows[rownum].cells[3].innerHTML = volumeDelta24;
-      table.rows[rownum].cells[3].innerHTML = newPrice;
-      if (newPrice > oldPrice) {
-        table.rows[rownum].cells[3].style.color = "green";
-      } else {
-        table.rows[rownum].cells[3].style.color = "red";
+      // console.log(prices)
+      var newPrice = prices.find(p => p.ticker.toLowerCase() === ticker.toLowerCase()).price
+      if (newPrice) {
+        var oldPrice = table.rows[rownum].cells[3].innerHTML = volumeDelta24;
+        table.rows[rownum].cells[3].innerHTML = Number(newPrice).toFixed(2);
+        if (newPrice > oldPrice) {
+          table.rows[rownum].cells[3].style.color = "green";
+        } else {
+          table.rows[rownum].cells[3].style.color = "red";
+        }
       }
 
       const removeBtn = '<a class="delete" title="Delete" data-toggle="tooltip" data-original-title="Delete"><i class="material-icons">delete</i></a>'
       table.rows[rownum].cells[4].innerHTML = removeBtn;
       table.rows[rownum].cells[4].id = ticker
       table.rows[rownum].cells[4].addEventListener("click", deleteTicker);
-
     })
   })
 }
@@ -110,6 +114,16 @@ function loadHoldingsData() {
     })
 }
 
+function loadPrices() {
+  return getStore('tickers')
+    .then((tickers) => {
+      return getPrices(tickers)
+    })
+    .then((prices) => {
+      setStore('prices', prices)
+    })
+}
+
 // The typeahead
 $("#token_name_input").easyAutocomplete({
   theme: "plate-dark",
@@ -171,6 +185,10 @@ $(document).ready(function () {
     })
 
   updateTable()
+  loadPrices()
+    .then(() => {
+      updateTable()
+    })
 });
 
 
