@@ -11,9 +11,18 @@
   <link href="vendor/css/flags.css" rel="stylesheet" type="text/css">
 
   <style>
+      /* Tooltip */
+    .tooltip > .tooltip-inner {
+        background-color: #73AD21;
+        font-color: #000000;
+        font-size: 0.7em;
+        opacity:.85;
+    }
+
     body {
-      width: 320px;
+      width: 400px;
       background-color: lavender;
+      font-size: .8em;
     }
 
     .table-hover tbody tr:hover td,
@@ -46,10 +55,13 @@
       <table id="mainTable" class="table table-striped table-hover">
         <thead>
           <tr>
-            <th scope="col">Token</th>
-            <th scope="col">5 days</th>
-            <th scope="col">24 hours </th>
-            <th scope="col">Price</th>
+            <th scope="col" >Token</th>
+            <th scope="col" data-toggle="tooltip" data-html="true"
+            title="<em>5-hour Change</em> <br/> The % change in token ownership by </br> top holders over the last 5 hours.">5-hour (%)</th>
+            <th scope="col" data-toggle="tooltip" data-html="true"
+            title="<em>24-hour Change</em> <br/> The % change in token ownership by </br> top holders over the last 24 hours.">24-hour (%) </th>
+            <th scope="col" data-toggle="tooltip" data-html="true"
+            title="<em>Price in dollar</em> <br/> (green if increased over last 24 hours)">Price ($)</th>
             <th scope="col"></th>
           </tr>
         </thead>
@@ -99,6 +111,7 @@
   <script src="lib/store.js"></script>
   <!-- Load popup -->
   <script src="popup.js"></script>
+
 </body>
 
 </html>

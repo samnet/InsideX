@@ -1,3 +1,7 @@
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 function updateTable() {
   const table = document.getElementById('mainTableBody')
 
@@ -24,7 +28,7 @@ function updateTable() {
       if (rownum === -1) {
         const row = table.insertRow(0);
         row.id = ticker;
-        [ticker, '-', '-', '-', '-'].forEach(function (element) {
+        [capitalizeFirstLetter(ticker), '-', '-', '-', '-'].forEach(function (element) {
           let newcell = row.insertCell(-1);
           newcell.innerHTML = element;
         })
@@ -180,6 +184,10 @@ $("#token_name_input").easyAutocomplete({
 
 
 $(document).ready(function () {
+  $('[data-toggle="tooltip"]').tooltip({
+    placement: "bottom",
+    delay: 500,
+  }) // tool tips (indication column title)
   loadTokensJson()
   getStore('holdings-last-load')
     .then((lastLoaded) => {
