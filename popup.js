@@ -1,5 +1,4 @@
 function updateTable() {
-  clearTable()
   const table = document.getElementById('mainTableBody')
 
   return Promise.all([
@@ -16,16 +15,24 @@ function updateTable() {
     const holdings120 = res[3]
     const prices = res[4]
 
-    tickers.forEach((ticker, rownum) => {
+    tickers.forEach((ticker) => {
       console.log("[updateTable]: ", ticker)
+      ticker = ticker.toLowerCase()
 
-      const row = table.insertRow(rownum);  
-      [ticker.toUpperCase(), 'N/A', 'N/A', 'N/A', 'N/A'].forEach(function (element) {
-        let newcell = row.insertCell(-1);
-        newcell.innerHTML = element;
-      })
+      let rownum = $(`#mainTableBody #${ticker}`).index();
+      console.log(rownum, ticker)
+      if (rownum === -1) {
+        const row = table.insertRow(0);
+        row.id = ticker;
+        [ticker, '-', '-', '-', '-'].forEach(function (element) {
+          let newcell = row.insertCell(-1);
+          newcell.innerHTML = element;
+        })
+        rownum = $(`#mainTableBody #${ticker}`).index();
+      }
+
       const contractAddress = tokens
-        .find(t => t.ticker.toLowerCase() === ticker.toLowerCase())
+        .find(t => t.ticker.toLowerCase() === ticker)
         .contractAddress
 
       if (holdings120[contractAddress]) {
@@ -39,7 +46,7 @@ function updateTable() {
       }
 
       // console.log(prices)
-      var newPriceObj = prices.find(p => p.ticker.toLowerCase() === ticker.toLowerCase())
+      var newPriceObj = prices.find(p => p.ticker.toLowerCase() === ticker)
       if (newPriceObj) {
         var oldPrice = table.rows[rownum].cells[3].innerHTML = volumeDelta24;
         table.rows[rownum].cells[3].innerHTML = Number(newPriceObj.price).toFixed(2);
@@ -52,7 +59,7 @@ function updateTable() {
 
       const removeBtn = '<a class="delete" title="Delete" data-toggle="tooltip" data-original-title="Delete"><i class="material-icons">delete</i></a>'
       table.rows[rownum].cells[4].innerHTML = removeBtn;
-      table.rows[rownum].cells[4].id = ticker
+      table.rows[rownum].cells[4].id = `${ticker}-delete`
       table.rows[rownum].cells[4].addEventListener("click", deleteTicker);
     })
   })
@@ -63,12 +70,8 @@ function getHoldingChange(holdings) {
   return (delta * 100).toFixed(1)
 }
 
-function clearTable() {
-  $('#mainTableBody').empty();
-}
-
 function deleteTicker() {
-  const ticker = this.id
+  const ticker = this.id.split('-')[0]
   console.log('delete', ticker)
   getStore('tickers')
     .then(tickers => {
@@ -77,7 +80,7 @@ function deleteTicker() {
         tickers.splice(index, 1);
         setStore('tickers', tickers)
           .then(() => {
-            updateTable()
+            $(`#mainTableBody #${ticker}`).remove()
           });
       }
     })
