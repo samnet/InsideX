@@ -35,11 +35,11 @@ function updateTable() {
       table.rows[rownum].cells[2].innerHTML = volumeDelta24;
 
       // console.log(prices)
-      var newPrice = prices.find(p => p.ticker.toLowerCase() === ticker.toLowerCase()).price
-      if (newPrice) {
+      var newPriceObj = prices.find(p => p.ticker.toLowerCase() === ticker.toLowerCase())
+      if (newPriceObj) {
         var oldPrice = table.rows[rownum].cells[3].innerHTML = volumeDelta24;
-        table.rows[rownum].cells[3].innerHTML = Number(newPrice).toFixed(2);
-        if (newPrice > oldPrice) {
+        table.rows[rownum].cells[3].innerHTML = Number(newPriceObj.price).toFixed(2);
+        if (newPriceObj.price > oldPrice) {
           table.rows[rownum].cells[3].style.color = "green";
         } else {
           table.rows[rownum].cells[3].style.color = "red";
@@ -198,9 +198,6 @@ $(document).ready(function () {
 // tokens : total tokens available
 // holdings-24 : 24 hour holdings for the tickers
 // holdings-120 : 120 hour holdings for the tickers
-// table-data : display table info
-
-
 
 ///// polling
 var pollInterval = 20 * 60000;
