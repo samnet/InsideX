@@ -28,11 +28,15 @@ function updateTable() {
         .find(t => t.ticker.toLowerCase() === ticker.toLowerCase())
         .contractAddress
 
-      var volumeDelta3 = getHoldingChange(holdings120[contractAddress])
-      table.rows[rownum].cells[1].innerHTML = volumeDelta3;
+      if (holdings120[contractAddress]) {
+        var volumeDelta3 = getHoldingChange(holdings120[contractAddress])
+        table.rows[rownum].cells[1].innerHTML = volumeDelta3;
+      }
 
-      var volumeDelta24 = getHoldingChange(holdings24[contractAddress])
-      table.rows[rownum].cells[2].innerHTML = volumeDelta24;
+      if (holdings24[contractAddress]) {
+        var volumeDelta24 = getHoldingChange(holdings24[contractAddress])
+        table.rows[rownum].cells[2].innerHTML = volumeDelta24;
+      }
 
       // console.log(prices)
       var newPriceObj = prices.find(p => p.ticker.toLowerCase() === ticker.toLowerCase())
@@ -153,15 +157,19 @@ $("#token_name_input").easyAutocomplete({
             tickers.push(newTicker)
             return setStore('tickers', tickers)
               .then(() => {
-                return loadHoldingsData()
-              })
-              .then(() => {
                 return updateTable()
               });
           }
         })
         .then(() => {
           $("#token_name_input").val("")
+          return Promise.all([
+            loadHoldingsData(),
+            loadPrices()
+          ])
+          .then(() => {
+            updateTable()
+          })
         })
     }
   }
