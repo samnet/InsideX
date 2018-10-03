@@ -206,8 +206,10 @@ $(document).ready(function () {
         return loadHoldingsData()
       }
     })
+    .then(() => {
+      return updateTable()
+    })
 
-  updateTable()
   loadPrices()
     .then(() => {
       updateTable()
