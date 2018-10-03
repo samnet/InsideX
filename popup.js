@@ -22,23 +22,22 @@ function updateTable() {
     tickers.forEach((ticker) => {
       console.log("[updateTable]: ", ticker)
       ticker = ticker.toLowerCase()
+      const token = tokens
+        .find(t => t.ticker.toLowerCase() === ticker)
 
       let rownum = $(`#mainTableBody #${ticker}`).index();
       console.log(rownum, ticker)
       if (rownum === -1) {
         const row = table.insertRow(0);
         row.id = ticker;
-        [capitalizeFirstLetter(ticker), '-', '-', '-', '-'].forEach(function (element) {
+        [capitalizeFirstLetter(token.name), '-', '-', '-', '-'].forEach(function (element) {
           let newcell = row.insertCell(-1);
           newcell.innerHTML = element;
         })
         rownum = $(`#mainTableBody #${ticker}`).index();
       }
 
-      const contractAddress = tokens
-        .find(t => t.ticker.toLowerCase() === ticker)
-        .contractAddress
-
+      const contractAddress = token.contractAddress
       if (holdings120[contractAddress]) {
         var volumeDelta3 = getHoldingChange(holdings120[contractAddress])
         table.rows[rownum].cells[1].innerHTML = volumeDelta3;
