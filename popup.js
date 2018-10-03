@@ -60,7 +60,7 @@ function updateTable() {
         }
       }
 
-      const removeBtn = '<a class="delete" title="Delete" data-toggle="tooltip" data-original-title="Delete"><i class="material-icons">delete</i></a>'
+      const removeBtn = '<a class="delete" title="Delete" data-toggle="tooltip" data-original-title="Delete"><i class="material-icons">close</i></a>'
       table.rows[rownum].cells[4].innerHTML = removeBtn;
       table.rows[rownum].cells[4].id = `${ticker}-delete`
       table.rows[rownum].cells[4].addEventListener("click", deleteTicker);
