@@ -26,7 +26,6 @@ function updateTable() {
         .find(t => t.ticker.toLowerCase() === ticker)
 
       let rownum = $(`#mainTableBody #${ticker}`).index();
-      console.log(rownum, ticker)
       if (rownum === -1) {
         const row = table.insertRow(0);
         row.id = ticker;
@@ -48,7 +47,6 @@ function updateTable() {
         table.rows[rownum].cells[2].innerHTML = volumeDelta24;
       }
 
-      // console.log(prices)
       var newPriceObj = prices.find(p => p.ticker.toLowerCase() === ticker)
       if (newPriceObj) {
         var oldPrice = table.rows[rownum].cells[3].innerHTML = volumeDelta24;
@@ -60,7 +58,7 @@ function updateTable() {
         }
       }
 
-      const removeBtn = '<a class="delete" title="Delete" data-toggle="tooltip" data-original-title="Delete"><i class="material-icons">close</i></a>'
+      const removeBtn = '<img src="vendor/images/cancel.png" alt="Delete" height=15 width=15></img>'
       table.rows[rownum].cells[4].innerHTML = removeBtn;
       table.rows[rownum].cells[4].id = `${ticker}-delete`
       table.rows[rownum].cells[4].addEventListener("click", deleteTicker);
