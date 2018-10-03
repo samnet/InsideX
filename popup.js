@@ -138,7 +138,9 @@ function loadPrices() {
 $("#token_name_input").easyAutocomplete({
   theme: "plate-dark",
   url: "data/tokens.json",
-  getValue: "name",
+  getValue: function (element) {
+    return element.name + element.ticker
+  },
   minCharNumber: 1,
   template: {
     type: "custom",
