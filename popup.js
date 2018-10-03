@@ -90,7 +90,11 @@ function deleteTicker() {
 function loadTokensJson() {
   return axios.get('data/tokens.json')
     .then(resp => {
-      return setStore('tokens', resp.data);
+      const tokens = resp.data.map(t => {
+        t.ticker = t.ticker.toLowerCase()
+        return t
+      })
+      return setStore('tokens', tokens);
     })
 }
 
@@ -187,6 +191,7 @@ $(document).ready(function () {
     placement: "bottom",
     delay: 500,
   }) // tool tips (indication column title)
+
   loadTokensJson()
   getStore('holdings-last-load')
     .then((lastLoaded) => {

@@ -1,6 +1,6 @@
 chrome.runtime.onInstalled.addListener(function() {
   // Default tickers selection
-  chrome.storage.sync.set({tickers: ["MKR", "ZRX"]}, function() {
+  chrome.storage.sync.set({tickers: ["mkr", "zrx"]}, function() {
     console.log("The by default selection tickers were saved.");
   });
 });
