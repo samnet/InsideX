@@ -1,3 +1,13 @@
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-127056435-1']);
+_gaq.push(['_trackPageview']);
+
+(function () {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = 'https://ssl.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
@@ -85,6 +95,8 @@ function deleteTicker() {
           });
       }
     })
+
+  _gaq.push(['_trackEvent', ticker, 'deleted']);
 }
 
 function loadTokensJson() {
@@ -164,6 +176,7 @@ $("#token_name_input").easyAutocomplete({
           if (!tickers.includes(newTicker)) {
 
             // Add new ticker
+            _gaq.push(['_trackEvent', ticker, 'added']);
             tickers.push(newTicker)
             return setStore('tickers', tickers)
               .then(() => {

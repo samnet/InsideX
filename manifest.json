@@ -1,7 +1,8 @@
 {
-  "name": "InsideX Alpha",
+  "name": "InsideX",
   "version": "1.0",
   "description": "InsideX Extension!",
+  "content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
   "permissions": [
     "alarms", "notifications", "activeTab", "declarativeContent", "storage",
     "https://www.bytes.io/"
