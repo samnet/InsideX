@@ -176,7 +176,7 @@ $("#token_name_input").easyAutocomplete({
           if (!tickers.includes(newTicker)) {
 
             // Add new ticker
-            _gaq.push(['_trackEvent', ticker, 'added']);
+            _gaq.push(['_trackEvent', newTicker, 'added']);
             tickers.push(newTicker)
             return setStore('tickers', tickers)
               .then(() => {

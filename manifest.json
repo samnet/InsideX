@@ -1,5 +1,6 @@
 {
   "name": "InsideX",
+  "short_name": "InsideX",
   "version": "1.0",
   "description": "InsideX Extension!",
   "content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
