@@ -217,7 +217,7 @@ $(document).ready(function () {
       }
 
       lastLoaded = new Date(lastLoaded)
-      lastLoaded.setHours(lastLoaded.getHours() + 1)
+      lastLoaded.setMinutes(lastLoaded.getMinutes() + 20)
       if (Date.now() > lastLoaded) {
         return loadHoldingsData()
       }
@@ -237,8 +237,8 @@ $(document).ready(function () {
 // store info
 // tickers : watching tokens
 // tokens : total tokens available
-// holdings-1change : 24 hour holdings for the tickers
-// holdings-2change : 120 hour holdings for the tickers
+// holdings-1change : 5 hour holdings for the tickers
+// holdings-2change : 24 hour holdings for the tickers
 
 ///// polling
 var pollInterval = 20 * 60000;
