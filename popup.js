@@ -47,19 +47,19 @@ function updateTable() {
       }
 
       const contractAddress = token.contractAddress
-      if (holdings2Change[contractAddress]) {
-        var volumeDelta3 = getHoldingChange(holdings2Change[contractAddress])
-        table.rows[rownum].cells[1].innerHTML = volumeDelta3;
+      if (holdings1Change[contractAddress]) {
+        var volumeDelta1 = getHoldingChange(holdings1Change[contractAddress])
+        table.rows[rownum].cells[1].innerHTML = volumeDelta1;
       }
 
-      if (holdings1Change[contractAddress]) {
-        var volumeDelta24 = getHoldingChange(holdings1Change[contractAddress])
-        table.rows[rownum].cells[2].innerHTML = volumeDelta24;
+      if (holdings2Change[contractAddress]) {
+        var volumeDelta = getHoldingChange(holdings2Change[contractAddress])
+        table.rows[rownum].cells[2].innerHTML = volumeDelta;
       }
 
       var newPriceObj = prices.find(p => p.ticker.toLowerCase() === ticker)
       if (newPriceObj) {
-        var oldPrice = table.rows[rownum].cells[3].innerHTML = volumeDelta24;
+        var oldPrice = volumeDelta1 || table.rows[rownum].cells[3].innerHTML;
         table.rows[rownum].cells[3].innerHTML = Number(newPriceObj.price).toFixed(2);
         if (newPriceObj.price > oldPrice) {
           table.rows[rownum].cells[3].style.color = "green";
