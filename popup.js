@@ -18,15 +18,15 @@ function updateTable() {
   return Promise.all([
     getStore('tickers'),
     getStore('tokens'),
-    getStore('holdings-24'),
-    getStore('holdings-120'),
+    getStore('holdings-1change'),
+    getStore('holdings-2change'),
     getStore('prices')
   ])
   .then((res) => {
     const tickers = res[0]
     const tokens = res[1]
-    const holdings24 = res[2]
-    const holdings120 = res[3]
+    const holdings1Change = res[2]
+    const holdings2Change = res[3]
     const prices = res[4]
 
     tickers.forEach((ticker) => {
@@ -47,13 +47,13 @@ function updateTable() {
       }
 
       const contractAddress = token.contractAddress
-      if (holdings120[contractAddress]) {
-        var volumeDelta3 = getHoldingChange(holdings120[contractAddress])
+      if (holdings2Change[contractAddress]) {
+        var volumeDelta3 = getHoldingChange(holdings2Change[contractAddress])
         table.rows[rownum].cells[1].innerHTML = volumeDelta3;
       }
 
-      if (holdings24[contractAddress]) {
-        var volumeDelta24 = getHoldingChange(holdings24[contractAddress])
+      if (holdings1Change[contractAddress]) {
+        var volumeDelta24 = getHoldingChange(holdings1Change[contractAddress])
         table.rows[rownum].cells[2].innerHTML = volumeDelta24;
       }
 
@@ -78,7 +78,9 @@ function updateTable() {
 
 function getHoldingChange(holdings) {
   const delta = (holdings.maxTimestampShares - holdings.minTimestampShare) / holdings.maxTimestampShares
-  return (delta * 100).toFixed(1)
+  const change = (delta * 100).toFixed(1)
+
+  return Math.abs(change) === 0 ? Math.abs(change).toFixed(1) : change
 }
 
 function deleteTicker() {
@@ -124,15 +126,15 @@ function loadHoldingsData() {
           .contractAddress
       })
       return Promise.all([
-        getDiffInHoldings(24, contractAddresses),
-        getDiffInHoldings(120, contractAddresses)
+        getDiffInHoldings(5, contractAddresses),
+        getDiffInHoldings(24, contractAddresses)
       ])
     })
     .then((res) => {
       console.log(res)
       return Promise.all([
-        setStore('holdings-24', res[0]),
-        setStore('holdings-120', res[1]),
+        setStore('holdings-1change', res[0]),
+        setStore('holdings-2change', res[1]),
         setStore('holdings-last-load', Date.now())
       ])
     })
@@ -160,7 +162,8 @@ $("#token_name_input").easyAutocomplete({
     type: "custom",
     method: function (value, item) {
       const abbrevAndName = `${item.name} | ${item.ticker.toUpperCase()}`
-      return `<img src="vendor/icons/${item.name}.png">   ${abbrevAndName}`
+      const imgName = item.name.toLowerCase().split(' ').join('-')
+      return `<img src="vendor/icons/${imgName}.png">   ${abbrevAndName}`
     }
   },
   list: {
@@ -234,8 +237,8 @@ $(document).ready(function () {
 // store info
 // tickers : watching tokens
 // tokens : total tokens available
-// holdings-24 : 24 hour holdings for the tickers
-// holdings-120 : 120 hour holdings for the tickers
+// holdings-1change : 24 hour holdings for the tickers
+// holdings-2change : 120 hour holdings for the tickers
 
 ///// polling
 var pollInterval = 20 * 60000;
@@ -248,23 +251,23 @@ function startPoller() {
       return Promise.all([
         getStore('tickers'),
         getStore('tokens'),
-        getStore('holdings-24'),
-        getStore('holdings-120')
+        getStore('holdings-1change'),
+        getStore('holdings-2change')
       ])
     })
     .then((res) => {
       const tickers = res[0]
       const tokens = res[1]
-      const holdings24 = res[2]
-      const holdings120 = res[3]
+      const holdings1Change = res[2]
+      const holdings2Change = res[3]
 
       tickers.forEach((ticker) => {
         const contractAddress = tokens
           .find(t => t.ticker.toLowerCase() === ticker.toLowerCase())
           .contractAddress
 
-        var volumeChange120 = getHoldingChange(holdings120[contractAddress])
-        var volumeChange24 = getHoldingChange(holdings24[contractAddress])
+        var volumeChange120 = getHoldingChange(holdings2Change[contractAddress])
+        var volumeChange24 = getHoldingChange(holdings1Change[contractAddress])
         if (volumeChange120 < -5 || volumeChange24 < -5) {
           // set the alarm
           console.log("set alarm", ticker, volumeChange120, volumeChange24)
