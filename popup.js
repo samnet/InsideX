@@ -23,11 +23,11 @@ function updateTable() {
     getStore('prices')
   ])
   .then((res) => {
-    const tickers = res[0]
-    const tokens = res[1]
-    const holdings1Change = res[2]
-    const holdings2Change = res[3]
-    const prices = res[4]
+    const tickers = res[0] || []
+    const tokens = res[1] || []
+    const holdings1Change = res[2] || []
+    const holdings2Change = res[3] || []
+    const prices = res[4] || []
 
     tickers.forEach((ticker) => {
       console.log("[updateTable]: ", ticker)
@@ -77,6 +77,7 @@ function updateTable() {
 }
 
 function getHoldingChange(holdings) {
+  if (!holdings) { return '-' }
   const delta = (holdings.maxTimestampShares - holdings.minTimestampShare) / holdings.maxTimestampShares
   const change = (delta * 100).toFixed(1)
 
@@ -91,7 +92,7 @@ function deleteTicker() {
       var index = tickers.indexOf(ticker);
       if (index > -1) {
         tickers.splice(index, 1);
-        setStore('tickers', tickers)
+        return setStore('tickers', tickers)
           .then(() => {
             $(`#mainTableBody #${ticker}`).remove()
           });
@@ -118,12 +119,12 @@ function loadHoldingsData() {
       getStore('tokens')
     ])
     .then((res) => {
-      const tickers = res[0]
-      const tokens = res[1]
+      const tickers = res[0] || []
+      const tokens = res[1] || []
       const contractAddresses = tickers.map(ticker => {
-        return tokens
+        const token = tokens
           .find(t => t.ticker.toLowerCase() === ticker.toLowerCase())
-          .contractAddress
+        return token && token.contractAddress
       })
       return Promise.all([
         getDiffInHoldings(5, contractAddresses),
@@ -146,7 +147,7 @@ function loadPrices() {
       return getPrices(tickers)
     })
     .then((prices) => {
-      setStore('prices', prices)
+      return setStore('prices', prices)
     })
 }
 
@@ -194,7 +195,7 @@ $("#token_name_input").easyAutocomplete({
             loadPrices()
           ])
           .then(() => {
-            updateTable()
+            return updateTable()
           })
         })
     }
@@ -221,6 +222,8 @@ $(document).ready(function () {
       if (Date.now() > lastLoaded) {
         return loadHoldingsData()
       }
+
+      return Promise.resolve()
     })
     .then(() => {
       return updateTable()
@@ -228,7 +231,7 @@ $(document).ready(function () {
 
   loadPrices()
     .then(() => {
-      updateTable()
+      return updateTable()
     })
 });
 
@@ -256,21 +259,21 @@ function startPoller() {
       ])
     })
     .then((res) => {
-      const tickers = res[0]
-      const tokens = res[1]
-      const holdings1Change = res[2]
-      const holdings2Change = res[3]
+      const tickers = res[0] || []
+      const tokens = res[1] || []
+      const holdings1Change = res[2] || []
+      const holdings2Change = res[3] || []
 
       tickers.forEach((ticker) => {
-        const contractAddress = tokens
+        const token = tokens
           .find(t => t.ticker.toLowerCase() === ticker.toLowerCase())
-          .contractAddress
+        const contractAddress = token || token.contractAddress
 
-        var volumeChange120 = getHoldingChange(holdings2Change[contractAddress])
-        var volumeChange24 = getHoldingChange(holdings1Change[contractAddress])
-        if (volumeChange120 < -5 || volumeChange24 < -5) {
+        var volumeChange1 = getHoldingChange(holdings1Change[contractAddress])
+        var volumeChange2 = getHoldingChange(holdings2Change[contractAddress])
+        if (volumeChange1 < -5 || volumeChange2 < -5) {
           // set the alarm
-          console.log("set alarm", ticker, volumeChange120, volumeChange24)
+          console.log("set alarm", ticker, volumeChange1, volumeChange2)
           setAlarm()
         }
       })
